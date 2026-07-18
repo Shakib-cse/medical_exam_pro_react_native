@@ -3,17 +3,36 @@ import { View, Text, ScrollView, TouchableOpacity, Image, Modal } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../auth/data/authStore';
 import { NavigationService } from '../../../helpers/NavigationService';
 import { Routes } from '../../../helpers/Routes';
+import { useQBankStore } from '../../qbank/data/qbankStore';
+import { CARD_QUESTION_MAP } from '../../qbank/data/mockQuestions';
 
 export const HomeScreen = () => {
+  const router = useRouter();
   const { t } = useTranslation();
   const { logout } = useAuthStore();
+  const { lastActiveCardId, sessions } = useQBankStore();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<'settings' | 'pricing' | 'logout'>(
     'settings',
   );
+
+  const activeCardId =
+    lastActiveCardId && sessions[lastActiveCardId] && !sessions[lastActiveCardId].isCompleted
+      ? lastActiveCardId
+      : null;
+
+  const currentSet = CARD_QUESTION_MAP[activeCardId || '1'] || CARD_QUESTION_MAP['1'];
+  const activeSessionData = activeCardId ? sessions[activeCardId] : null;
+  const currentQNum = activeSessionData ? activeSessionData.currentIndex + 1 : 1;
+  const totalQCount = currentSet.questions.length;
+  const progressPercent = activeSessionData
+    ? Math.min(100, Math.round((currentQNum / totalQCount) * 100))
+    : 0;
 
   const handleLogout = () => {
     setIsMenuOpen(false);
@@ -29,6 +48,13 @@ export const HomeScreen = () => {
     } else if (item === 'pricing') {
       NavigationService.navigateTo(Routes.pricingScreen);
     }
+  };
+
+  const handleResumePress = () => {
+    router.push({
+      pathname: Routes.practiceSessionScreen,
+      params: { cardId: activeCardId || '1' },
+    });
   };
 
   return (
@@ -62,30 +88,37 @@ export const HomeScreen = () => {
         <View className="bg-[#124D73] rounded-3xl p-5 mb-5 shadow-sm">
           <Text className="text-sky-200/80 text-xs font-medium mb-3">Start where you left off</Text>
           <Text className="text-white text-xl font-bold mb-2 leading-snug">
-            Renal & Urology: acute kidney injury questions
+            {currentSet.title}
           </Text>
           <Text className="text-slate-300 text-xs leading-relaxed mb-4">
-            You stopped at question 18 of 101. Continue the same timed set, then review explanations
-            for electrolyte emergencies.
+            {activeSessionData
+              ? `You stopped at question ${currentQNum} of ${totalQCount}. Continue the same timed set, then review explanations.`
+              : 'Start a fresh practice session from 4,500+ clinical and SJT questions.'}
           </Text>
 
           {/* Inner Progress Box */}
           <View className="bg-[#0B3754] p-4 rounded-2xl mb-5">
             <View className="flex-row justify-between items-center">
               <Text className="text-white text-xs font-semibold">Current Progress</Text>
-              <Text className="text-white text-xs font-bold">18%</Text>
+              <Text className="text-white text-xs font-bold">{`${progressPercent}%`}</Text>
             </View>
             <View className="w-full bg-[#1D4A6B] h-2.5 rounded-full mt-2.5 overflow-hidden">
-              <View className="w-[18%] bg-[#288BDC] h-full rounded-full" />
+              <View
+                className="bg-[#288BDC] h-full rounded-full"
+                style={{ width: `${progressPercent}%` }}
+              />
             </View>
           </View>
 
           {/* Resume Action Button */}
           <TouchableOpacity
             activeOpacity={0.8}
+            onPress={handleResumePress}
             className="bg-[#FF6B2C] rounded-full px-5 py-3 flex-row items-center self-start"
           >
-            <Text className="text-white font-bold text-sm mr-1.5">Resume set</Text>
+            <Text className="text-white font-bold text-sm mr-1.5">
+              {activeSessionData ? 'Resume set' : 'Start session'}
+            </Text>
             <Ionicons name="chevron-forward" size={16} color="white" />
           </TouchableOpacity>
         </View>

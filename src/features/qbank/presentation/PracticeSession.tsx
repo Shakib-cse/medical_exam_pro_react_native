@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { CARD_QUESTION_MAP } from '../data/mockQuestions';
+import { useQBankStore } from '../data/qbankStore';
 
 export const PracticeSessionScreen = () => {
   const router = useRouter();
@@ -15,18 +16,43 @@ export const PracticeSessionScreen = () => {
   const questions = currentCardSet.questions;
   const sessionTitle = currentCardSet.title;
 
+  const { saveSessionProgress, clearSessionProgress, getSessionProgress } = useQBankStore();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<{ [qId: number]: string }>({});
-  const [secondsElapsed, setSecondsElapsed] = useState(0); // Starts from 00:00
+  const [secondsElapsed, setSecondsElapsed] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const isSubmittedRef = useRef(false);
 
-  // Reset session state whenever screen comes into focus (fresh practice session)
+  // Restore saved session state whenever screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      setCurrentIndex(0);
-      setUserAnswers({});
-      setSecondsElapsed(0);
-    }, [cardId]),
+      isSubmittedRef.current = false;
+      const saved = getSessionProgress(cardId);
+      if (saved && !saved.isCompleted) {
+        setCurrentIndex(saved.currentIndex ?? 0);
+        setUserAnswers(saved.userAnswers ?? {});
+        setSecondsElapsed(saved.secondsElapsed ?? 0);
+      } else {
+        setCurrentIndex(0);
+        setUserAnswers({});
+        setSecondsElapsed(0);
+      }
+      setIsLoaded(true);
+    }, [cardId, getSessionProgress]),
   );
+
+  // Auto-save state when changes occur after initial load
+  useEffect(() => {
+    if (isLoaded && !isSubmittedRef.current) {
+      saveSessionProgress(cardId, {
+        currentIndex,
+        userAnswers,
+        secondsElapsed,
+        isCompleted: false,
+      });
+    }
+  }, [cardId, currentIndex, userAnswers, secondsElapsed, isLoaded, saveSessionProgress]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -70,6 +96,12 @@ export const PracticeSessionScreen = () => {
 
   const isActionDisabled = !isAnswered;
   const isLastQuestion = currentIndex === questions.length - 1;
+
+  const handleSubmitSession = () => {
+    isSubmittedRef.current = true;
+    clearSessionProgress(cardId);
+    router.back();
+  };
 
   return (
     <View className="flex-1 bg-[#F8F9FA]" style={{ paddingTop: Math.max(insets.top, 12) }}>
@@ -271,7 +303,7 @@ export const PracticeSessionScreen = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             disabled={isActionDisabled}
-            onPress={() => router.back()}
+            onPress={handleSubmitSession}
             className={`bg-[#10B981] py-3.5 px-3 rounded-xl items-center justify-center flex-row flex-1 ${
               isActionDisabled ? 'opacity-40' : 'opacity-100'
             }`}

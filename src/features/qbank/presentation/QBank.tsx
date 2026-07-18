@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Routes } from '../../../helpers/Routes';
 import { useAuthStore } from '../../auth/data/authStore';
 import { NavigationService } from '../../../helpers/NavigationService';
+import { useQBankStore } from '../data/qbankStore';
 
 interface QuestionItem {
   id: string;
@@ -183,6 +184,10 @@ export const QBankScreen = () => {
     setIsSideMenuOpen(true);
   };
 
+  const { getSessionProgress } = useQBankStore();
+  const activeSession = selectedQuestion ? getSessionProgress(selectedQuestion.id) : undefined;
+  const hasActiveSession = !!activeSession && !activeSession.isCompleted;
+
   return (
     <SafeAreaView className="flex-1 bg-[#F8F9FA]">
       <ScrollView className="flex-1 px-5 pt-3 pb-8" showsVerticalScrollIndicator={false}>
@@ -342,7 +347,7 @@ export const QBankScreen = () => {
               </Text>
             </View>
 
-            {/* Start Practice Session Button */}
+            {/* Start / Resume Practice Session Button */}
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
@@ -354,7 +359,9 @@ export const QBankScreen = () => {
               }}
               className="w-full bg-[#FF6B25] rounded-full py-3.5 items-center justify-center"
             >
-              <Text className="text-white font-bold text-base">Start Practice Session</Text>
+              <Text className="text-white font-bold text-base">
+                {hasActiveSession ? 'Resume Practice Session' : 'Start Practice Session'}
+              </Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>
