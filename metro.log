@@ -1,0 +1,11 @@
+
+> react_native_template@1.0.0 web
+> expo start --web
+
+Starting project at /Users/softvence/Documents/template/react_native_template
+› Port 8081 is running react_native_template in another window
+  /Users/softvence/test_react/react_native_template (pid 36561)
+Input is required, but 'npx expo' is in non-interactive mode.
+Required input:
+> Use port 8082 instead?
+› Skipping dev server
