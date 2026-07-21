@@ -4,7 +4,13 @@ import { NavigationService } from './NavigationService';
 
 export class DeviceHelper {
   static async lockPortrait() {
-    await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    try {
+      if (ScreenOrientation && ScreenOrientation.lockAsync) {
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+      }
+    } catch (e) {
+      console.warn('ScreenOrientation lock failed:', e);
+    }
   }
 
   static setupBackButtonExitAlert() {

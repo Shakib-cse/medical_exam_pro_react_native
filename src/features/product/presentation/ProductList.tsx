@@ -9,7 +9,7 @@ export const ProductListScreen = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
   if (isLoading) {
     return (
@@ -28,7 +28,9 @@ export const ProductListScreen = () => {
         contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => NavigationService.navigateToWithArgs(Routes.productDetailsScreen, { id: item.id })}
+            onPress={() =>
+              NavigationService.navigateToWithArgs(Routes.productDetailsScreen, { id: item.id })
+            }
             className="flex-row bg-white p-4 rounded-xl mb-4 shadow-sm"
           >
             <Image
