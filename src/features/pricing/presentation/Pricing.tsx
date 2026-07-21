@@ -4,23 +4,20 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
-  Modal,
   StatusBar,
   useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 import { Routes } from '../../../helpers/Routes';
 import { useAuthStore } from '../../auth/data/authStore';
 import { NavigationService } from '../../../helpers/NavigationService';
+import { SideDrawer } from '../../../common/components/SideDrawer';
 
 export const PricingScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { t } = useTranslation();
   const { logout } = useAuthStore();
   const { width: windowWidth } = useWindowDimensions();
 
@@ -213,83 +210,15 @@ export const PricingScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Slide-out Sidebar Drawer Modal */}
-      <Modal
-        visible={isSideMenuOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsSideMenuOpen(false)}
-      >
-        <View className="flex-1 flex-row bg-black/40">
-          {/* Dimmed backdrop area on left */}
-          <TouchableOpacity
-            className="w-[20%]"
-            activeOpacity={1}
-            onPress={() => setIsSideMenuOpen(false)}
-          />
-
-          {/* Right Drawer Panel */}
-          <SafeAreaView className="w-[80%] bg-white h-full px-5 pt-3 pb-8">
-            {/* Drawer Header */}
-            <View className="flex-row items-center justify-between mt-2 mb-8">
-              <View className="flex-row items-center">
-                <Image
-                  source={require('../../../../assets/logo.png')}
-                  style={{ width: 28, height: 28 }}
-                  resizeMode="contain"
-                />
-                <Text className="text-lg font-bold text-[#1A1D1E] tracking-tight ml-2">
-                  Medical<Text className="text-[#288BDC]">Exam</Text>Pro
-                </Text>
-              </View>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => setIsSideMenuOpen(false)}
-                className="w-10 h-10 rounded-full bg-[#E9ECEF] items-center justify-center"
-              >
-                <Ionicons name="close" size={22} color="#1A1D1E" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Menu Items */}
-            <View className="space-y-1">
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => handleMenuItemPress('settings')}
-                className={`p-3.5 rounded-2xl mb-1 ${
-                  selectedMenuItem === 'settings' ? 'bg-[#E9ECEF]' : 'bg-transparent'
-                }`}
-              >
-                <Text className="text-[#1A1D1E] font-semibold text-base">
-                  {t('profile.settings', 'Settings')}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => handleMenuItemPress('pricing')}
-                className={`p-3.5 rounded-2xl mb-1 ${
-                  selectedMenuItem === 'pricing' ? 'bg-[#E9ECEF]' : 'bg-transparent'
-                }`}
-              >
-                <Text className="text-[#1A1D1E] font-semibold text-base">
-                  {t('auth.pricing', 'Pricing')}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handleLogout}
-                className="p-3.5 rounded-2xl mt-1"
-              >
-                <Text className="text-[#FF5B5C] font-semibold text-base">
-                  {t('profile.logout', 'Log out')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-        </View>
-      </Modal>
+      {/* Slide-out Sidebar Drawer */}
+      <SideDrawer
+        isOpen={isSideMenuOpen}
+        onClose={() => setIsSideMenuOpen(false)}
+        selectedItem={selectedMenuItem}
+        onSelectSettings={() => handleMenuItemPress('settings')}
+        onSelectPricing={() => handleMenuItemPress('pricing')}
+        onLogout={handleLogout}
+      />
     </View>
   );
 };

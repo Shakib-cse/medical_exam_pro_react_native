@@ -4,6 +4,7 @@ import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-rout
 import Toast from 'react-native-toast-message';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAuthStore } from '../src/features/auth/data/authStore';
 import { DeviceHelper } from '../src/helpers/DeviceHelper';
 import { updateApiAuthToken } from '../src/networks/axios';
@@ -44,20 +45,20 @@ export default function RootLayout() {
     }, 1);
 
     return () => clearTimeout(timer);
-  }, [isHydrated, isAuthenticated, segments, navigationState?.key]);
+  }, [isHydrated, isAuthenticated, segments, navigationState?.key, user?.token, router]);
 
   if (!isHydrated) {
     return null;
   }
 
   return (
-    <>
+    <SafeAreaProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       </Stack>
       <Toast />
-    </>
+    </SafeAreaProvider>
   );
 }
