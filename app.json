@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react_native_template",
-    "slug": "react_native_template",
+    "name": "MedicalExamPro",
+    "slug": "medical-exam-pro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,7 +12,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.medicalexampro.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,12 +26,12 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.react_native_template"
+      "package": "com.medicalexampro.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "reactnativetemplate",
+    "scheme": "medicalexampro",
     "plugins": ["expo-router"]
   }
 }

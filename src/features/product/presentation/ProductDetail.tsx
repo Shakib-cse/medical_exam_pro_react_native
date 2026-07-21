@@ -12,7 +12,7 @@ export const ProductDetailScreen = () => {
     if (id) {
       selectProduct(id);
     }
-  }, [id]);
+  }, [id, selectProduct]);
 
   if (isLoading || !selectedProduct) {
     return (
@@ -32,11 +32,9 @@ export const ProductDetailScreen = () => {
       <View className="p-6">
         <Text className="text-3xl font-bold text-gray-900 mb-2">{selectedProduct.name}</Text>
         <Text className="text-2xl font-bold text-blue-600 mb-6">${selectedProduct.price}</Text>
-        
+
         <Text className="text-lg font-semibold text-gray-800 mb-2">Description</Text>
-        <Text className="text-gray-600 leading-6 mb-8">
-          {selectedProduct.description}
-        </Text>
+        <Text className="text-gray-600 leading-6 mb-8">{selectedProduct.description}</Text>
 
         <CustomButton
           title="Add to Cart"

@@ -1,12 +1,13 @@
 export const AppRegExpText = {
   kRegExpEmail: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/,
-  kRegExpPhone: /^(\+[0-9]+[\- \.]*)?(\([0-9]+\)[\- \.]*)?([0-9][0-9\- \.]+[0-9])$/,
-  patternMail: /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  kRegExpPhone: /^(\+[0-9]+[- .]*)?(\([0-9]+[- .]*)?([0-9][0-9- .]+[0-9])$/,
+  patternMail:
+    /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 };
 
 export const AppStorageKeys = {
-  kKeyfirstTime: "first",
-  kSelectedCategotyId: "selectedCategotyId",
+  kKeyfirstTime: 'first',
+  kSelectedCategotyId: 'selectedCategotyId',
   kKeyStatus: 'status',
   kEmail: 'email',
   kPassword: 'password',
